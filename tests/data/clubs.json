@@ -1,0 +1,104 @@
+{
+    "clubs": [
+        {
+            "name": "Simply Lift",
+            "email": "john@simplylift.co",
+            "points": "13"
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "points": "4"
+        },
+        {
+            "name": "She Lifts",
+            "email": "kate@shelifts.co.uk",
+            "points": "12"
+        },
+        {
+            "name": "Club Zero",
+            "email": "zero@test.com",
+            "points": "0"
+        },
+        {
+            "name": "Rich Club",
+            "email": "rich@test.com",
+            "points": "100"
+        },
+        {
+            "name": "Power Lifters",
+            "email": "power@test.com",
+            "points": "50"
+        },
+        {
+            "name": "Gym Rats",
+            "email": "rats@test.com",
+            "points": "20"
+        },
+        {
+            "name": "Muscle Up",
+            "email": "muscle@test.com",
+            "points": "15"
+        },
+        {
+            "name": "Fit Fam",
+            "email": "fit@test.com",
+            "points": "30"
+        },
+        {
+            "name": "Titan Gym",
+            "email": "titan@test.com",
+            "points": "25"
+        },
+        {
+            "name": "Olympus",
+            "email": "olympus@test.com",
+            "points": "40"
+        },
+        {
+            "name": "Spartan Box",
+            "email": "spartan@test.com",
+            "points": "10"
+        },
+        {
+            "name": "The Forge",
+            "email": "forge@test.com",
+            "points": "8"
+        },
+        {
+            "name": "Atlas Strength",
+            "email": "atlas@test.com",
+            "points": "60"
+        },
+        {
+            "name": "Phoenix Fitness",
+            "email": "phoenix@test.com",
+            "points": "18"
+        },
+        {
+            "name": "Elite Squad",
+            "email": "elite@test.com",
+            "points": "22"
+        },
+        {
+            "name": "Viking Gym",
+            "email": "viking@test.com",
+            "points": "5"
+        },
+        {
+            "name": "Zenith Fit",
+            "email": "zenith@test.com",
+            "points": "14"
+        },
+        {
+            "name": "Peak Performance",
+            "email": "peak@test.com",
+            "points": "35"
+        },
+        {
+            "name": "Alpha Training",
+            "email": "alpha@test.com",
+            "points": "11"
+        }
+    ]
+}

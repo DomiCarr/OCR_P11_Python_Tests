@@ -1,0 +1,104 @@
+{
+    "competitions": [
+        {
+            "name": "Spring Festival",
+            "date": "2020-03-27 10:00:00",
+            "numberOfPlaces": "25"
+        },
+        {
+            "name": "Fall Classic",
+            "date": "2020-10-22 13:30:00",
+            "numberOfPlaces": "13"
+        },
+        {
+            "name": "Winter Open",
+            "date": "2021-12-01 09:00:00",
+            "numberOfPlaces": "10"
+        },
+        {
+            "name": "Summer Jam",
+            "date": "2022-07-15 11:00:00",
+            "numberOfPlaces": "15"
+        },
+        {
+            "name": "Future Games 2026",
+            "date": "2026-06-01 10:00:00",
+            "numberOfPlaces": "50"
+        },
+        {
+            "name": "Championship 2027",
+            "date": "2027-01-10 14:00:00",
+            "numberOfPlaces": "100"
+        },
+        {
+            "name": "Master Cup",
+            "date": "2027-05-20 08:00:00",
+            "numberOfPlaces": "20"
+        },
+        {
+            "name": "Ultimate Challenge",
+            "date": "2027-09-12 16:00:00",
+            "numberOfPlaces": "30"
+        },
+        {
+            "name": "Pro League",
+            "date": "2028-02-14 10:00:00",
+            "numberOfPlaces": "45"
+        },
+        {
+            "name": "Global Meet",
+            "date": "2028-11-30 09:30:00",
+            "numberOfPlaces": "60"
+        },
+        {
+            "name": "Regional Qualifier",
+            "date": "2020-05-05 10:00:00",
+            "numberOfPlaces": "5"
+        },
+        {
+            "name": "Inter-Club Meet",
+            "date": "2020-08-12 15:00:00",
+            "numberOfPlaces": "12"
+        },
+        {
+            "name": "Night Lift",
+            "date": "2021-02-20 20:00:00",
+            "numberOfPlaces": "8"
+        },
+        {
+            "name": "Morning Glory",
+            "date": "2021-06-10 07:00:00",
+            "numberOfPlaces": "22"
+        },
+        {
+            "name": "Endurance Test",
+            "date": "2022-11-11 11:11:11",
+            "numberOfPlaces": "33"
+        },
+        {
+            "name": "Strength Expo",
+            "date": "2023-04-01 10:00:00",
+            "numberOfPlaces": "40"
+        },
+        {
+            "name": "Power Weekend",
+            "date": "2026-12-25 10:00:00",
+            "numberOfPlaces": "25"
+        },
+        {
+            "name": "New Year Bash",
+            "date": "2027-01-01 00:00:00",
+            "numberOfPlaces": "50"
+        },
+        {
+            "name": "Olympic Spirit",
+            "date": "2028-08-08 08:08:08",
+            "numberOfPlaces": "80"
+        },
+        {
+            "name": "Final Showdown",
+            "date": "2029-12-31 23:59:59",
+            "numberOfPlaces": "100"
+        }
+    ]
+}

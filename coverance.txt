@@ -1,0 +1,719 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-9.0.2, pluggy-1.6.0
+rootdir: /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing
+plugins: mock-3.15.1, locust-2.43.1
+collected 30 items
+
+tests/functional/test_ui_flows.py F..FFFF                                [ 23%]
+tests/integration/test_booking_flow.py FF                                [ 30%]
+tests/integration/test_server_routes.py .F.F.                            [ 46%]
+tests/unit/test_auth.py .F.                                              [ 56%]
+tests/unit/test_booking.py FFFFFFF                                       [ 80%]
+tests/unit/test_data_load.py ....                                        [ 93%]
+tests/unit/test_point_board.py FF                                        [100%]
+
+=================================== FAILURES ===================================
+__________________ TestUIFlows.test_story_1_public_scoreboard __________________
+
+self = <functional.test_ui_flows.TestUIFlows object at 0x107333610>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_story_1_public_scoreboard(self, client):
+        """
+        Action: GET /pointsDisplay to view the public scoreboard.
+        Expected: HTTP 200 and presence of the HTML table structure.
+        """
+        response = client.get('/pointsDisplay')
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/functional/test_ui_flows.py:41: AssertionError
+___________________ TestUIFlows.test_story_4_booking_errors ____________________
+
+self = <functional.test_ui_flows.TestUIFlows object at 0x107438510>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_story_4_booking_errors(self, client):
+        """
+        Action: POST /purchasePlaces with values exceeding limits or
+        negative quantities.
+        Expected: Request processed without server crash (Flash messages
+        expected).
+        """
+        client.post('/showSummary', data={'email': 'rich@test.com'})
+    
+        # Case: 13 places (limit is 12)
+        res_limit = client.post('/purchasePlaces', data={
+            'competition': 'Final Showdown',
+            'club': 'Rich Club',
+            'places': '13'
+        }, follow_redirects=True)
+>       assert b"can't book more than 12" in res_limit.data
+E       assert b"can't book more than 12" in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...ch%20Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...ch%20Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 5624 bytes [200 OK]>.data
+
+tests/functional/test_ui_flows.py:91: AssertionError
+_______________ TestUIFlows.test_story_4_bis_insufficient_points _______________
+
+self = <functional.test_ui_flows.TestUIFlows object at 0x1073d3d10>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_story_4_bis_insufficient_points(self, client):
+        """
+        Action: POST /purchasePlaces with more points than the club has.
+        Expected: Flash message 'Not enough points'.
+        """
+        client.post('/showSummary', data={'email': 'zero@test.com'})
+        response = client.post('/purchasePlaces', data={
+            'competition': 'Final Showdown',
+            'club': 'Club Zero',
+            'places': '1'
+        }, follow_redirects=True)
+>       assert b"Not enough points" in response.data
+E       assert b'Not enough points' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...ub%20Zero">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...ub%20Zero">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 5622 bytes [200 OK]>.data
+
+tests/functional/test_ui_flows.py:112: AssertionError
+_________________ TestUIFlows.test_story_5_past_events_access __________________
+
+self = <functional.test_ui_flows.TestUIFlows object at 0x1073c3130>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_story_5_past_events_access(self, client):
+        """
+        Action: GET /book/competition/club for a competition with a past date.
+        Expected: HTTP 200 and logic handled by the server (Already passed).
+        """
+        client.post('/showSummary', data={'email': 'john@simplylift.co'})
+        response = client.get(
+            '/book/Spring%20Festival/Simply%20Lift',
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+>       assert b"already passed" in response.data
+E       assert b'already passed' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...<input type="number" name="places" id=""/>\n        <button type="submit">Book</button>\n    </form>\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...<input type="number" name="places" id=""/>\n        <button type="submit">Book</button>\n    </form>\n</body>\n</html>' = <WrapperTestResponse 603 bytes [200 OK]>.data
+
+tests/functional/test_ui_flows.py:125: AssertionError
+________________ TestUIFlows.test_error_pages_and_invalid_data _________________
+
+self = <functional.test_ui_flows.TestUIFlows object at 0x1073c3350>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_error_pages_and_invalid_data(self, client):
+        """
+        Action: Access routes with unknown email or non-existent
+        competition names.
+        Expected: Server handles missing data gracefully via redirects or
+        error messages.
+        """
+        # Branch: Unknown email
+>       res_email = client.post(
+            '/showSummary',
+            data={'email': 'unknown@test.com'},
+            follow_redirects=True
+        )
+
+tests/functional/test_ui_flows.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+env/lib/python3.13/site-packages/werkzeug/test.py:1167: in post
+    return self.open(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/testing.py:235: in open
+    response = super().open(
+env/lib/python3.13/site-packages/werkzeug/test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    @app.route('/showSummary', methods=['POST'])
+    def showSummary():
+>       club = [club for club in clubs if club['email'] == request.form['email']][0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+server.py:31: IndexError
+__________________ TestBookingFlow.test_complete_booking_flow __________________
+
+self = <integration.test_booking_flow.TestBookingFlow object at 0x1073339d0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x10748f350>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_complete_booking_flow(self, mocker, client):
+        """
+        Action: Follows the sequence Login -> Access Booking -> Purchase.
+        Expected: HTTP 200 and points updated in the shared state.
+        """
+        mock_clubs = [{
+            'name': 'Iron Temple',
+            'email': 'admin@irontemple.com',
+            'points': '20'
+        }]
+        mock_comps = [{
+            'name': 'Spring Festival',
+            'date': '2026-03-27 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        # 1. Login
+        login_res = client.post(
+            '/showSummary',
+            data={'email': 'admin@irontemple.com'},
+            follow_redirects=True
+        )
+        assert login_res.status_code == 200
+        assert b'Welcome, admin@irontemple.com' in login_res.data
+    
+        # 2. Access Booking Page
+        book_res = client.get('/book/Spring Festival/Iron Temple')
+        assert book_res.status_code == 200
+        assert b'Booking for Spring Festival' in book_res.data
+    
+        # 3. Purchase Places
+        purchase_res = client.post('/purchasePlaces', data={
+            'club': 'Iron Temple',
+            'competition': 'Spring Festival',
+            'places': '5'
+        }, follow_redirects=True)
+    
+        # 4. Final Verifications
+        assert purchase_res.status_code == 200
+        assert b'Great-booking complete!' in purchase_res.data
+>       assert mock_clubs[0]['points'] == '15'
+E       AssertionError: assert '20' == '15'
+E         
+E         - 15
+E         + 20
+
+tests/integration/test_booking_flow.py:63: AssertionError
+___________ TestBookingFlow.test_booking_persistence_on_points_board ___________
+
+self = <integration.test_booking_flow.TestBookingFlow object at 0x107333c50>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1074b2b50>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_persistence_on_points_board(self, mocker, client):
+        """
+        Action: Purchase places and then access the public points board.
+        Expected: Updated points balance is visible on the public display.
+        """
+        mock_clubs = [{
+            'name': 'Iron Temple',
+            'email': 'admin@irontemple.com',
+            'points': '10'
+        }]
+        mock_comps = [{
+            'name': 'Fall Classic',
+            'date': '2026-10-22 13:30:00',
+            'numberOfPlaces': '13'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        # Execute Purchase
+        client.post('/purchasePlaces', data={
+            'club': 'Iron Temple',
+            'competition': 'Fall Classic',
+            'places': '2'
+        })
+    
+        # Check Public Board (Phase 2 Requirement)
+        board_res = client.get('/pointsDisplay')
+>       assert board_res.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/integration/test_booking_flow.py:93: AssertionError
+__________________ TestServerRoutes.test_points_display_route __________________
+
+self = <integration.test_server_routes.TestServerRoutes object at 0x107333ed0>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_points_display_route(self, client):
+        """
+        Action: GET /pointsDisplay.
+        Expected: HTTP 200 (Public access according to Phase 2 specifications).
+        """
+        response = client.get('/pointsDisplay')
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/integration/test_server_routes.py:37: AssertionError
+_________ TestServerRoutes.test_booking_route_with_invalid_parameters __________
+
+self = <integration.test_server_routes.TestServerRoutes object at 0x107438640>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1075a4d50>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_route_with_invalid_parameters(self, mocker, client):
+        """
+        Action: GET /book/InvalidComp/InvalidClub.
+        Expected: HTTP 500 or 404 depending on error handling (current code yields 500).
+        """
+        # Using empty lists to ensure parameters won't be found
+        mocker.patch('server.clubs', [])
+        mocker.patch('server.competitions', [])
+    
+>       response = client.get('/book/UnknownComp/UnknownClub')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_server_routes.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+env/lib/python3.13/site-packages/werkzeug/test.py:1162: in get
+    return self.open(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/testing.py:235: in open
+    response = super().open(
+env/lib/python3.13/site-packages/werkzeug/test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+competition = 'UnknownComp', club = 'UnknownClub'
+
+    @app.route('/book/<competition>/<club>')
+    def book(competition, club):
+>       foundClub = [c for c in clubs if c['name'] == club][0]
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+server.py:37: IndexError
+_________________ TestAuth.test_login_with_unregistered_email __________________
+
+self = <unit.test_auth.TestAuth object at 0x107460190>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x107503890>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_login_with_unregistered_email(self, mocker, client):
+        """
+        Action: POST /showSummary with an email NOT present in the data source.
+        Expected: HTTP 302 (Redirect) and error Flash message present in the HTML.
+        """
+        mocker.patch('server.clubs', [])
+    
+        # follow_redirects=True allows us to check the final page content (the Flash message)
+>       response = client.post('/showSummary', data={'email': 'unknown@test.com'}, follow_redirects=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_auth.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+env/lib/python3.13/site-packages/werkzeug/test.py:1167: in post
+    return self.open(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/testing.py:235: in open
+    response = super().open(
+env/lib/python3.13/site-packages/werkzeug/test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    @app.route('/showSummary', methods=['POST'])
+    def showSummary():
+>       club = [club for club in clubs if club['email'] == request.form['email']][0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+server.py:31: IndexError
+___________________ TestBooking.test_booking_point_deduction ___________________
+
+self = <unit.test_booking.TestBooking object at 0x1074602d0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1074ef310>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_point_deduction(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with 5 places for a club with 20 points.
+        Expected: Club points decremented to 15 in the global data list.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': '5'
+        })
+    
+>       assert mock_clubs[0]['points'] == '15'
+E       AssertionError: assert '20' == '15'
+E         
+E         - 15
+E         + 20
+
+tests/unit/test_booking.py:40: AssertionError
+___________________ TestBooking.test_booking_limit_per_club ____________________
+
+self = <unit.test_booking.TestBooking object at 0x107460410>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1074ee0b0>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_limit_per_club(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with 13 places (exceeding the limit).
+        Expected: HTTP 200, Error Flash message present, and stock unchanged.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': '13'
+        })
+    
+        assert response.status_code == 200
+>       assert b'12 places' in response.data
+E       assert b'12 places' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 687 bytes [200 OK]>.data
+
+tests/unit/test_booking.py:63: AssertionError
+________________ TestBooking.test_booking_exceeding_club_points ________________
+
+self = <unit.test_booking.TestBooking object at 0x1074388a0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1076402c0>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_exceeding_club_points(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with more places than the club balance.
+        Expected: HTTP 200, Error Flash message present, and points unchanged.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '5'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': '6'
+        })
+    
+        assert response.status_code == 200
+>       assert b'Not enough points' in response.data
+E       assert b'Not enough points' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 686 bytes [200 OK]>.data
+
+tests/unit/test_booking.py:86: AssertionError
+___________ TestBooking.test_booking_exceeding_competition_capacity ____________
+
+self = <unit.test_booking.TestBooking object at 0x1074389d0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x107517380>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_exceeding_competition_capacity(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with more places than available in stock.
+        Expected: HTTP 200, Error Flash message present, and stock unchanged.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '5'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': '6'
+        })
+    
+        assert response.status_code == 200
+>       assert b'Not enough places' in response.data
+E       assert b'Not enough places' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...      Number of Places: -1\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...      Number of Places: -1\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 620 bytes [200 OK]>.data
+
+tests/unit/test_booking.py:109: AssertionError
+_______________ TestBooking.test_booking_with_negative_quantity ________________
+
+self = <unit.test_booking.TestBooking object at 0x1074432f0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x107640120>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_with_negative_quantity(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with a negative quantity.
+        Expected: HTTP 200, Error Flash message present, and status unchanged.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': '-1'
+        })
+    
+        assert response.status_code == 200
+>       assert b'Invalid' in response.data
+E       assert b'Invalid' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>'
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 687 bytes [200 OK]>.data
+
+tests/unit/test_booking.py:132: AssertionError
+________________ TestBooking.test_booking_for_past_competition _________________
+
+self = <unit.test_booking.TestBooking object at 0x1073c38a0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1075154a0>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_for_past_competition(self, mocker, client):
+        """
+        Action: POST /purchasePlaces for a competition with a past date.
+        Expected: HTTP 200, Error Flash message present, and stock unchanged.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Past Comp',
+            'date': '2020-01-01 10:00:00',
+            'numberOfPlaces': '10'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+        response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Past Comp',
+            'places': '1'
+        })
+    
+        assert response.status_code == 200
+>       assert b'over' in response.data or b'past' in response.data
+E       assert (b'over' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' or b'past' in b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>')
+E        +  where b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 698 bytes [200 OK]>.data
+E        +  and   b'<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial...Comp/Club">Book Places</a>\n            \n        </li>\n        <hr />\n        \n    </ul>\n    \n\n</body>\n</html>' = <WrapperTestResponse 698 bytes [200 OK]>.data
+
+tests/unit/test_booking.py:155: AssertionError
+____________ TestBooking.test_booking_with_invalid_string_quantity _____________
+
+self = <unit.test_booking.TestBooking object at 0x1073c3680>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1078b97e0>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_booking_with_invalid_string_quantity(self, mocker, client):
+        """
+        Action: POST /purchasePlaces with a non-numeric string.
+        Expected: HTTP 200 and error message for invalid input.
+        """
+        mock_clubs = [{'name': 'Club', 'email': 'c@c.co', 'points': '20'}]
+        mock_comps = [{
+            'name': 'Comp',
+            'date': '2026-10-10 10:00:00',
+            'numberOfPlaces': '25'
+        }]
+        mocker.patch('server.clubs', mock_clubs)
+        mocker.patch('server.competitions', mock_comps)
+    
+>       response = client.post('/purchasePlaces', data={
+            'club': 'Club',
+            'competition': 'Comp',
+            'places': 'abc'
+        })
+
+tests/unit/test_booking.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+env/lib/python3.13/site-packages/werkzeug/test.py:1167: in post
+    return self.open(*args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/testing.py:235: in open
+    response = super().open(
+env/lib/python3.13/site-packages/werkzeug/test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/werkzeug/test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+env/lib/python3.13/site-packages/flask/app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    @app.route('/purchasePlaces', methods=['POST'])
+    def purchasePlaces():
+        competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+        club = [c for c in clubs if c['name'] == request.form['club']][0]
+>       placesRequired = int(request.form['places'])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: invalid literal for int() with base 10: 'abc'
+
+server.py:50: ValueError
+_______________ TestPointsBoard.test_points_board_accessibility ________________
+
+self = <unit.test_point_board.TestPointsBoard object at 0x107333890>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_points_board_accessibility(self, client):
+        """
+        Action: GET /pointsDisplay without any authentication.
+        Expected: HTTP 200 (Publicly accessible route).
+        """
+        response = client.get('/pointsDisplay')
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests/unit/test_point_board.py:28: AssertionError
+_______________ TestPointsBoard.test_points_board_data_rendering _______________
+
+self = <unit.test_point_board.TestPointsBoard object at 0x1074607d0>
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1075de000>
+client = <FlaskClient <Flask 'server'>>
+
+    def test_points_board_data_rendering(self, mocker, client):
+        """
+        Action: GET /pointsDisplay with a specific set of mocked club data.
+        Expected: HTML contains the exact names and points of all clubs in the data source.
+        """
+        mock_clubs = [
+            {'name': 'Iron Temple', 'email': 'admin@iron.co', 'points': '15'},
+            {'name': 'She Lifts', 'email': 'admin@she.co', 'points': '12'}
+        ]
+        mocker.patch('server.clubs', mock_clubs)
+    
+        response = client.get('/pointsDisplay')
+    
+        # Verify both clubs are listed with their correct point totals
+>       assert b'Iron Temple' in response.data
+E       AssertionError: assert b'Iron Temple' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
+E        +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
+
+tests/unit/test_point_board.py:44: AssertionError
+=========================== short test summary info ============================
+FAILED tests/functional/test_ui_flows.py::TestUIFlows::test_story_1_public_scoreboard
+FAILED tests/functional/test_ui_flows.py::TestUIFlows::test_story_4_booking_errors
+FAILED tests/functional/test_ui_flows.py::TestUIFlows::test_story_4_bis_insufficient_points
+FAILED tests/functional/test_ui_flows.py::TestUIFlows::test_story_5_past_events_access
+FAILED tests/functional/test_ui_flows.py::TestUIFlows::test_error_pages_and_invalid_data
+FAILED tests/integration/test_booking_flow.py::TestBookingFlow::test_complete_booking_flow
+FAILED tests/integration/test_booking_flow.py::TestBookingFlow::test_booking_persistence_on_points_board
+FAILED tests/integration/test_server_routes.py::TestServerRoutes::test_points_display_route
+FAILED tests/integration/test_server_routes.py::TestServerRoutes::test_booking_route_with_invalid_parameters
+FAILED tests/unit/test_auth.py::TestAuth::test_login_with_unregistered_email
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_point_deduction
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_limit_per_club
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_exceeding_club_points
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_exceeding_competition_capacity
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_with_negative_quantity
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_for_past_competition
+FAILED tests/unit/test_booking.py::TestBooking::test_booking_with_invalid_string_quantity
+FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility
+FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering
+======================== 19 failed, 11 passed in 0.39s =========================
