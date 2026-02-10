@@ -1,5 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
+from datetime import datetime
 
 
 # Load club data from JSON file
@@ -49,6 +50,12 @@ def book(competition, club):
     # Retrieve specific club and competition objects
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
+
+    # Check if competition is in the past
+    if foundCompetition['date'] < datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
+        flash("This competition is over.")
+        return render_template('welcome.html', club=foundClub, competitions=competitions)
+
     if foundClub and foundCompetition:
         return render_template('booking.html', club=foundClub, competition=foundCompetition)
     else:
@@ -64,6 +71,11 @@ def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
+
+    # Double check if competition is in the past during purchase
+    if competition['date'] < datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
+        flash("This competition is over.")
+        return render_template('welcome.html', club=club, competitions=competitions)
 
     # Check if the competition has enough places
     if placesRequired > int(competition['numberOfPlaces']):
