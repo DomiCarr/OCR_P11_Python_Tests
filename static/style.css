@@ -1,0 +1,6 @@
+/* Flash messages styling */
+.flash-message {
+    color: red;
+    font-weight: bold;
+    list-style: none;
+}
