@@ -28,8 +28,13 @@ class TestBooking:
             'date': '2026-10-10 10:00:00',
             'numberOfPlaces': '25'
         }]
+        # Patch data to use mocks instead of real files
         mocker.patch('server.clubs', mock_clubs)
         mocker.patch('server.competitions', mock_comps)
+
+        # Option A: Mock built-in open and json.dump to prevent real disk writes
+        mocker.patch('builtins.open', mocker.mock_open())
+        mocker.patch('json.dump')
 
         client.post('/purchasePlaces', data={
             'club': 'Club',
@@ -37,7 +42,8 @@ class TestBooking:
             'places': '5'
         })
 
-        assert mock_clubs[0]['points'] == '15'
+        # Verification: Assert the points were correctly deducted in the mock data
+        assert int(mock_clubs[0]['points']) == 15
 
     def test_booking_limit_per_club(self, mocker, client):
         """

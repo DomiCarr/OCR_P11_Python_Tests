@@ -67,9 +67,14 @@ def purchasePlaces():
     placesRequired = int(request.form['places'])
     # Deduct requested places from competition capacity
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
+    club['points'] = int(club['points'])-placesRequired
+    # Save updated data to JSON files
+    with open('clubs.json', 'w') as c:
+        json.dump({'clubs': clubs}, c)
+    with open('competitions.json', 'w') as comps:
+        json.dump({'competitions': competitions}, comps)
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
-
 
 # TODO: Add route for points display
 
