@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Clubs Points Board</h1>
+
+<a href="{{ url_for('index') }}">Back to Home</a>
+<br><br>
+
+<table>
+    <thead>
+        <tr>
+            <th>Club Name</th>
+            <th>Points Available</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for club in clubs %}
+        <tr>
+            <td><strong>{{ club.name }}</strong></td>
+            <td>{{ club.points }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

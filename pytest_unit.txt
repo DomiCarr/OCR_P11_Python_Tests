@@ -19,12 +19,7 @@ tests/unit/test_data_load.py::TestDataLoad::test_clubs_loading_type PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_competitions_loading_type PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_club_required_keys PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_competition_required_keys PASSED
-tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility FAILED
-tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering FAILED
+tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility PASSED
+tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering PASSED
 
-=========================== short test summary info ============================
-FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility - assert 404 == 200
- +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
-FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering - AssertionError: assert b'Iron Temple' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
- +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
-========================= 2 failed, 14 passed in 0.08s =========================
+============================== 16 passed in 0.08s ==============================

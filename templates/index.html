@@ -2,10 +2,20 @@
 
 {% block content %}
 <h1>Welcome to the GUDLFT Registration Portal!</h1>
-Please enter your secretary email to continue:
-<form action="showSummary" method="post">
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="" />
-    <button type="submit">Enter</button>
-</form>
+
+<section>
+    <p>Please enter your secretary email to continue:</p>
+    <form action="{{ url_for('showSummary') }}" method="post">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required />
+        <button type="submit">Enter</button>
+    </form>
+</section>
+
+<hr>
+
+<section>
+    <p>You can also view the current rankings:</p>
+    <a href="{{ url_for('pointsDisplay') }}">View Clubs Points Board</a>
+</section>
 {% endblock %}

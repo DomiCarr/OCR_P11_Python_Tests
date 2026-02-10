@@ -114,7 +114,17 @@ def purchasePlaces():
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
-# TODO: Add route for points display
+
+# Route to display the points board for all clubs
+@app.route('/pointsDisplay')
+def pointsDisplay():
+    # Sort clubs by name to provide a clear, organized list for the user
+    # Note: This route is public and does not require a login, fulfilling TU15 requirements
+    sorted_clubs = sorted(clubs, key=lambda x: x['name'])
+
+    # Render the points-display.html template and pass the list of clubs
+    # This allows the template to iterate over the data and display names and points
+    return render_template('points-display.html', clubs=sorted_clubs)
 
 
 # Log out the user and return to index
