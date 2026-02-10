@@ -33,15 +33,14 @@ def index():
 # Authenticate user by email and show dashboard
 @app.route('/showSummary', methods=['POST'])
 def showSummary():
-    login_message = ""
     # Attempt to find the club matching the provided email
     try:
         club = [club for club in clubs if club['email'] == request.form['email']][0]
         return render_template('welcome.html', club=club, competitions=competitions)
     except IndexError:
-        # We use "Sorry" to match the existing unit test requirement
-        login_message = "Sorry, that email was not found."
-        return render_template('index.html', login_message=login_message)
+        # Replaced login_message variable with flash()
+        flash("Sorry, that email was not found.")
+        return render_template('index.html')
 
 
 # Display the booking form for a specific competition
@@ -65,6 +64,7 @@ def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
+
     # Deduct requested places from competition capacity
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     club['points'] = int(club['points'])-placesRequired
