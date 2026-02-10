@@ -70,11 +70,17 @@ def purchasePlaces():
     # Identify the competition and club from form data
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
-    placesRequired = int(request.form['places'])
 
     # Double check if competition is in the past during purchase
     if competition['date'] < datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
         flash("This competition is over.")
+        return render_template('welcome.html', club=club, competitions=competitions)
+
+    # Handle non-numeric input for places
+    try:
+        placesRequired = int(request.form['places'])
+    except ValueError:
+        flash("Invalid quantity.")
         return render_template('welcome.html', club=club, competitions=competitions)
 
     # Check if quantity is negative or zero

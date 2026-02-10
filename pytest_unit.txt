@@ -14,7 +14,7 @@ tests/unit/test_booking.py::TestBooking::test_booking_exceeding_club_points PASS
 tests/unit/test_booking.py::TestBooking::test_booking_exceeding_competition_capacity PASSED
 tests/unit/test_booking.py::TestBooking::test_booking_with_negative_quantity PASSED
 tests/unit/test_booking.py::TestBooking::test_booking_for_past_competition PASSED
-tests/unit/test_booking.py::TestBooking::test_booking_with_invalid_string_quantity FAILED
+tests/unit/test_booking.py::TestBooking::test_booking_with_invalid_string_quantity PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_clubs_loading_type PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_competitions_loading_type PASSED
 tests/unit/test_data_load.py::TestDataLoad::test_club_required_keys PASSED
@@ -23,9 +23,8 @@ tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility
 tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering FAILED
 
 =========================== short test summary info ============================
-FAILED tests/unit/test_booking.py::TestBooking::test_booking_with_invalid_string_quantity - ValueError: invalid literal for int() with base 10: 'abc'
 FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility - assert 404 == 200
  +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
 FAILED tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering - AssertionError: assert b'Iron Temple' in b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n'
  +  where b'<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n' = <WrapperTestResponse 207 bytes [404 NOT FOUND]>.data
-========================= 3 failed, 13 passed in 0.08s =========================
+========================= 2 failed, 14 passed in 0.08s =========================
