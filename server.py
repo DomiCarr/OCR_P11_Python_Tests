@@ -77,6 +77,11 @@ def purchasePlaces():
         flash("This competition is over.")
         return render_template('welcome.html', club=club, competitions=competitions)
 
+    # Check if quantity is negative or zero
+    if placesRequired <= 0:
+        flash("Invalid quantity.")
+        return render_template('welcome.html', club=club, competitions=competitions)
+
     # Check if the competition has enough places
     if placesRequired > int(competition['numberOfPlaces']):
         flash("Not enough places")
