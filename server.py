@@ -75,8 +75,16 @@ def book(competition, club):
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
     # Identify the competition and club from form data
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    competition_list = [c for c in competitions if c['name'] == request.form['competition']]
+    club_list = [c for c in clubs if c['name'] == request.form['club']]
+
+    # Handle missing data without crashing
+    if not competition_list or not club_list:
+        flash("Something went wrong-please try again")
+        return render_template('welcome.html', club=None, competitions=competitions), 404
+
+    competition = competition_list[0]
+    club = club_list[0]
 
     # Double check if competition is in the past during purchase
     if competition['date'] < datetime.now().strftime("%Y-%m-%d %H:%M:%S"):

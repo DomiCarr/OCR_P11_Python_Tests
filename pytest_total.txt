@@ -1,0 +1,39 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-9.0.2, pluggy-1.6.0 -- /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing/env/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing
+plugins: mock-3.15.1, locust-2.43.1
+collecting ... collected 30 items
+
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_1_public_scoreboard PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_2_and_6_auth_flow PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_3_booking_success PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_4_booking_errors PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_4_bis_insufficient_points PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_5_past_events_access PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_error_pages_and_invalid_data PASSED
+tests/integration/test_booking_flow.py::TestBookingFlow::test_complete_booking_flow PASSED
+tests/integration/test_booking_flow.py::TestBookingFlow::test_booking_persistence_on_points_board PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_index_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_points_display_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_unknown_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_booking_route_with_invalid_parameters PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_logout_redirect PASSED
+tests/unit/test_auth.py::TestAuth::test_login_with_registered_email PASSED
+tests/unit/test_auth.py::TestAuth::test_login_with_unregistered_email PASSED
+tests/unit/test_auth.py::TestAuth::test_logout_process PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_point_deduction PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_limit_per_club PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_exceeding_club_points PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_exceeding_competition_capacity PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_with_negative_quantity PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_for_past_competition PASSED
+tests/unit/test_booking.py::TestBooking::test_booking_with_invalid_string_quantity PASSED
+tests/unit/test_data_load.py::TestDataLoad::test_clubs_loading_type PASSED
+tests/unit/test_data_load.py::TestDataLoad::test_competitions_loading_type PASSED
+tests/unit/test_data_load.py::TestDataLoad::test_club_required_keys PASSED
+tests/unit/test_data_load.py::TestDataLoad::test_competition_required_keys PASSED
+tests/unit/test_point_board.py::TestPointsBoard::test_points_board_accessibility PASSED
+tests/unit/test_point_board.py::TestPointsBoard::test_points_board_data_rendering PASSED
+
+============================== 30 passed in 0.11s ==============================

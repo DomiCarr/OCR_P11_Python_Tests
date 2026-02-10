@@ -66,7 +66,7 @@ class TestUIFlows:
         """
         client.post('/showSummary', data={'email': 'john@simplylift.co'})
         response = client.post('/purchasePlaces', data={
-            'competition': 'Final Showdown',
+            'competition': 'Future Games 2026',
             'club': 'Simply Lift',
             'places': '1'
         }, follow_redirects=True)
@@ -75,41 +75,37 @@ class TestUIFlows:
 
     def test_story_4_booking_errors(self, client):
         """
-        Action: POST /purchasePlaces with values exceeding limits or
-        negative quantities.
-        Expected: Request processed without server crash (Flash messages
-        expected).
+        Action: POST /purchasePlaces with more than 12 places.
+        Expected: Error message 'You cannot book more than 12 places'.
         """
-        client.post('/showSummary', data={'email': 'rich@test.com'})
-
-        # Case: 13 places (limit is 12)
-        res_limit = client.post('/purchasePlaces', data={
-            'competition': 'Final Showdown',
-            'club': 'Rich Club',
+        client.post('/showSummary', data={'email': 'john@simplylift.co'})
+        response = client.post('/purchasePlaces', data={
+            'competition': 'Future Games 2026',
+            'club': 'Simply Lift',
             'places': '13'
         }, follow_redirects=True)
-        assert b"can't book more than 12" in res_limit.data
+        assert b"You cannot book more than 12 places" in response.data
 
-        # Case: Negative places
+# Case: Negative places
         res_neg = client.post('/purchasePlaces', data={
-            'competition': 'Final Showdown',
-            'club': 'Rich Club',
+            'competition': 'Future Games 2026',
+            'club': 'Simply Lift',
             'places': '-1'
         }, follow_redirects=True)
-        assert b"positive number" in res_neg.data
+        assert b"Invalid quantity." in res_neg.data
 
     def test_story_4_bis_insufficient_points(self, client):
         """
-        Action: POST /purchasePlaces with more points than the club has.
-        Expected: Flash message 'Not enough points'.
+        Action: POST /purchasePlaces with more places than club points.
+        Expected: Error message 'Not enough points'.
         """
-        client.post('/showSummary', data={'email': 'zero@test.com'})
+        client.post('/showSummary', data={'email': 'alpha@test.com'})
         response = client.post('/purchasePlaces', data={
-            'competition': 'Final Showdown',
-            'club': 'Club Zero',
-            'places': '1'
+            'competition': 'Future Games 2026',
+            'club': 'Alpha Training',
+            'places': '12'
         }, follow_redirects=True)
-        assert b"Not enough points" in response.data
+        assert b'Not enough points' in response.data
 
     def test_story_5_past_events_access(self, client):
         """
@@ -122,7 +118,7 @@ class TestUIFlows:
             follow_redirects=True
         )
         assert response.status_code == 200
-        assert b"already passed" in response.data
+        assert b"This competition is over." in response.data
 
     def test_error_pages_and_invalid_data(self, client):
         """
@@ -137,7 +133,7 @@ class TestUIFlows:
             data={'email': 'unknown@test.com'},
             follow_redirects=True
         )
-        assert b"Unknown email" in res_email.data
+        assert b"Sorry, that email was not found." in res_email.data
 
         # Branch: Unknown competition
         res_comp = client.get(

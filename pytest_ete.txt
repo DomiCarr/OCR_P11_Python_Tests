@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-9.0.2, pluggy-1.6.0 -- /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing/env/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing
+plugins: mock-3.15.1, locust-2.43.1
+collecting ... collected 7 items
+
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_1_public_scoreboard PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_2_and_6_auth_flow PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_3_booking_success PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_4_booking_errors PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_4_bis_insufficient_points PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_story_5_past_events_access PASSED
+tests/endtoend/test_ui_flows.py::TestUIFlows::test_error_pages_and_invalid_data PASSED
+
+============================== 7 passed in 0.07s ===============================
