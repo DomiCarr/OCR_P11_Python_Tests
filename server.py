@@ -48,8 +48,15 @@ def showSummary():
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
     # Retrieve specific club and competition objects
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    foundClubList = [c for c in clubs if c['name'] == club]
+    foundCompetitionList = [c for c in competitions if c['name'] == competition]
+
+    if not foundClubList or not foundCompetitionList:
+        flash("Something went wrong-please try again")
+        return render_template('welcome.html', club=None, competitions=competitions), 404
+
+    foundClub = foundClubList[0]
+    foundCompetition = foundCompetitionList[0]
 
     # Check if competition is in the past
     if foundCompetition['date'] < datetime.now().strftime("%Y-%m-%d %H:%M:%S"):

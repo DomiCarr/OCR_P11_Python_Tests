@@ -60,8 +60,8 @@ class TestBookingFlow:
         # 4. Final Verifications
         assert purchase_res.status_code == 200
         assert b'Great-booking complete!' in purchase_res.data
-        assert mock_clubs[0]['points'] == '15'
-        assert mock_comps[0]['numberOfPlaces'] == '20'
+        assert int(mock_clubs[0]['points']) == 15
+        assert mock_comps[0]['numberOfPlaces'] == 20
 
     def test_booking_persistence_on_points_board(self, mocker, client):
         """

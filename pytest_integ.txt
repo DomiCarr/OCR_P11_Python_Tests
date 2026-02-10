@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-9.0.2, pluggy-1.6.0 -- /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing/env/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/carrasd/Develp/OCR/Projets/P11/Python_Testing
+plugins: mock-3.15.1, locust-2.43.1
+collecting ... collected 7 items
+
+tests/integration/test_booking_flow.py::TestBookingFlow::test_complete_booking_flow PASSED
+tests/integration/test_booking_flow.py::TestBookingFlow::test_booking_persistence_on_points_board PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_index_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_points_display_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_unknown_route PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_booking_route_with_invalid_parameters PASSED
+tests/integration/test_server_routes.py::TestServerRoutes::test_logout_redirect PASSED
+
+============================== 7 passed in 0.08s ===============================

@@ -47,16 +47,14 @@ class TestServerRoutes:
     def test_booking_route_with_invalid_parameters(self, mocker, client):
         """
         Action: GET /book/InvalidComp/InvalidClub.
-        Expected: HTTP 500 or 404 depending on error handling (current code yields 500).
+        Expected: HTTP 404 status code for non-existent resources.
         """
-        # Using empty lists to ensure parameters won't be found
         mocker.patch('server.clubs', [])
         mocker.patch('server.competitions', [])
 
         response = client.get('/book/UnknownComp/UnknownClub')
-        # Based on current server.py line 111-112, this will raise an IndexError
-        # which translates to an Internal Server Error (500)
-        assert response.status_code == 500
+
+        assert response.status_code == 404
 
     def test_logout_redirect(self, client):
         """
